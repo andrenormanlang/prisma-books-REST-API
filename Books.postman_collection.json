@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "6de91583-c172-4155-ab37-aadbf31173b8",
-		"name": "FED22 Books",
+		"name": "Books",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "542474"
 	},
@@ -334,7 +334,7 @@
 					},
 					{
 						"key": "username",
-						"value": "jn@thehiveresistance.com",
+						"value": "alanmoore@moonandtheserpent.com",
 						"type": "string"
 					}
 				]
@@ -509,7 +509,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"jn@thehiveresistance.com\",\n  \"password\": \"abc123\"\n}",
+					"raw": "{\n  \"email\": \"alanmoore@moonandtheserpent.com\",\n  \"password\": \"abc123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -566,7 +566,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"Johan Nordström\",\n  \"email\": \"jn@thehiveresistance.com\",\n  \"password\": \"abc123\",\n  \"is_admin\": true\n}",
+					"raw": "{\n  \"name\": \"Alan Moore\",\n  \"email\": \"alanmoore@moonandtheserpent.com\",\n  \"password\": \"abc123\",\n  \"is_admin\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
