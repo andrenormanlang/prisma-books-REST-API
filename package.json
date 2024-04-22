@@ -1,13 +1,11 @@
 {
-  "name": "05-prisma-books",
+  "name": "prisma-books-rest-api",
   "version": "1.0.0",
   "description": "",
   "main": "build/server.js",
   "scripts": {
-    "build": "env-cmd --silent bash scripts/build.sh",
-    "build-app": "tsc",
-    "migrate": "npx prisma migrate deploy",
-    "dev": "cross-env DEBUG=prisma-books:* nodemon server.ts",
+    "build": "tsc && npx prisma migrate deploy",
+    "dev": "cross-env DEBUG=prisma-boilerplate:* nodemon server.ts",
     "start": "node build/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
