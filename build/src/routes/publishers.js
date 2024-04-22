@@ -19,6 +19,11 @@ router.get('/:publisherId', publisher_controller_1.show);
  */
 router.post('/', publisher_controller_1.store);
 /**
+ * POST /publishers/bulk
+  */
+// Route for bulk creating publishers
+router.post('/bulk', publisher_controller_1.storeBulkPublishers);
+/**
  * PATCH /publishers/:publisherId
  */
 router.patch('/:publisherId', publisher_controller_1.update);

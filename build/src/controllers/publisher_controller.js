@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroy = exports.update = exports.store = exports.show = exports.index = void 0;
+exports.destroy = exports.update = exports.storeBulkPublishers = exports.store = exports.show = exports.index = void 0;
 const prisma_1 = __importDefault(require("../prisma"));
 /**
  * Get all publishers
@@ -65,6 +65,37 @@ const store = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.store = store;
+/**
+ * Bulk create publishers
+ */
+const storeBulkPublishers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const publishers = req.body.publishers;
+    // Validate the input
+    if (!Array.isArray(publishers) || publishers.length === 0) {
+        return res.status(400).send({
+            status: "fail",
+            message: "Invalid input: please provide an array of publisher data."
+        });
+    }
+    try {
+        const createdPublishers = yield prisma_1.default.publisher.createMany({
+            data: publishers,
+            skipDuplicates: true, // Optionally skip duplicates based on unique constraints
+        });
+        res.status(201).send({
+            status: "success",
+            data: createdPublishers,
+            message: `${createdPublishers.count} publishers have been created successfully.`
+        });
+    }
+    catch (err) {
+        return res.status(500).send({
+            status: "error",
+            message: "Something went wrong while creating publishers."
+        });
+    }
+});
+exports.storeBulkPublishers = storeBulkPublishers;
 /**
  * Update a publisher
  */

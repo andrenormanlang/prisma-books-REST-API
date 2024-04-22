@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroy = exports.update = exports.store = exports.show = exports.index = void 0;
+exports.destroy = exports.update = exports.storeBulkBooks = exports.store = exports.show = exports.index = void 0;
 const debug_1 = __importDefault(require("debug"));
 const prisma_1 = __importDefault(require("../prisma"));
 // Create a new debug instance
@@ -86,14 +86,94 @@ const store = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.store = store;
 /**
+ * Bulk create books
+ */
+const storeBulkBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const books = req.body.books;
+    // Validate the input
+    if (!Array.isArray(books) || books.length === 0) {
+        return res.status(400).send({
+            status: "fail",
+            message: "Invalid input: please provide an array of book data."
+        });
+    }
+    try {
+        const createdBooks = yield prisma_1.default.book.createMany({
+            data: books,
+            skipDuplicates: true, // Optionally skip duplicates based on unique constraints
+        });
+        res.status(201).send({
+            status: "success",
+            data: createdBooks,
+            message: `${createdBooks.count} books have been created successfully.`
+        });
+    }
+    catch (err) {
+        debug("Error thrown when bulk creating books: %o", err);
+        res.status(500).send({
+            status: "error",
+            message: "Something went wrong while creating books."
+        });
+    }
+});
+exports.storeBulkBooks = storeBulkBooks;
+/**
+ * Update a book
+ */
+/**
  * Update a book
  */
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookId = Number(req.params.bookId);
+    const updateData = req.body;
+    try {
+        const updatedBook = yield prisma_1.default.book.update({
+            where: {
+                id: bookId
+            },
+            data: updateData,
+        });
+        res.send({
+            status: "success",
+            data: updatedBook,
+            message: "Book updated successfully."
+        });
+    }
+    catch (error) {
+        debug("Error thrown when updating book with id %o: %o", bookId, error);
+        if (error.code === "P2025") {
+            res.status(404).send({ status: "error", message: "Book not found." });
+        }
+        else {
+            res.status(500).send({ status: "error", message: "Something went wrong." });
+        }
+    }
 });
 exports.update = update;
 /**
  * Delete a book
  */
 const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookId = Number(req.params.bookId);
+    try {
+        yield prisma_1.default.book.delete({
+            where: {
+                id: bookId
+            }
+        });
+        res.send({
+            status: "success",
+            message: "Book deleted successfully."
+        });
+    }
+    catch (error) {
+        debug("Error thrown when deleting book with id %o: %o", bookId, error);
+        if (error.code === "P2025") {
+            res.status(404).send({ status: "error", message: "Book not found." });
+        }
+        else {
+            res.status(500).send({ status: "error", message: "Something went wrong." });
+        }
+    }
 });
 exports.destroy = destroy;

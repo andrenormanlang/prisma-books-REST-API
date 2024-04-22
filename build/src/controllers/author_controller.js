@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeBook = exports.addBook = exports.destroy = exports.update = exports.store = exports.show = exports.index = void 0;
+exports.removeBook = exports.addBooks = exports.addBook = exports.destroy = exports.update = exports.storeBulkAuthors = exports.store = exports.show = exports.index = void 0;
 /**
  * Author Template
  */
@@ -83,15 +83,89 @@ const store = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.store = store;
 /**
+ * Bulk create authors
+ */
+const storeBulkAuthors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authors = req.body.authors;
+    // Validate the input
+    if (!Array.isArray(authors) || authors.length === 0) {
+        return res.status(400).send({
+            status: "fail",
+            message: "Invalid input: please provide an array of author data."
+        });
+    }
+    try {
+        const createdAuthors = yield prisma_1.default.author.createMany({
+            data: authors,
+            skipDuplicates: true, // Optionally skip duplicates based on unique constraints
+        });
+        res.status(201).send({
+            status: "success",
+            data: createdAuthors,
+            message: `${createdAuthors.count} authors have been created successfully.`
+        });
+    }
+    catch (err) {
+        res.status(500).send({
+            status: "error",
+            message: "Something went wrong while creating authors."
+        });
+    }
+});
+exports.storeBulkAuthors = storeBulkAuthors;
+/**
  * Update a author
  */
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authorId = Number(req.params.authorId);
+    const updateData = req.body;
+    try {
+        const updatedAuthor = yield prisma_1.default.author.update({
+            where: {
+                id: authorId
+            },
+            data: updateData,
+        });
+        res.send({
+            status: "success",
+            data: updatedAuthor,
+            message: "Author updated successfully."
+        });
+    }
+    catch (error) {
+        if (error.code === "P2025") {
+            res.status(404).send({ status: "error", message: "Author not found." });
+        }
+        else {
+            res.status(500).send({ status: "error", message: "Something went wrong." });
+        }
+    }
 });
 exports.update = update;
 /**
  * Delete a author
  */
 const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authorId = Number(req.params.authorId);
+    try {
+        yield prisma_1.default.author.delete({
+            where: {
+                id: authorId
+            }
+        });
+        res.send({
+            status: "success",
+            message: "Author deleted successfully."
+        });
+    }
+    catch (error) {
+        if (error.code === "P2025") {
+            res.status(404).send({ status: "error", message: "Author not found." });
+        }
+        else {
+            res.status(500).send({ status: "error", message: "Something went wrong." });
+        }
+    }
 });
 exports.destroy = destroy;
 /**
@@ -127,6 +201,48 @@ const addBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.addBook = addBook;
+/**
+ * Link multiple books to an author
+ */
+const addBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Assuming bookIds are passed as an array of numbers in the body
+    const { bookIds } = req.body;
+    // Validate input
+    if (!bookIds || !Array.isArray(bookIds) || !bookIds.length) {
+        return res.status(400).send({
+            status: "fail",
+            message: "Invalid book IDs. Please provide an array of book IDs."
+        });
+    }
+    // Mapping IDs to the format required by Prisma
+    const connectionArray = bookIds.map(id => ({ id }));
+    try {
+        const result = yield prisma_1.default.author.update({
+            where: { id: Number(req.params.authorId) },
+            data: {
+                books: {
+                    connect: connectionArray,
+                }
+            },
+            include: {
+                books: true, // Include updated list of books in the response
+            }
+        });
+        return res.status(201).send({
+            status: "success",
+            data: result,
+            message: "Books successfully linked to author."
+        });
+    }
+    catch (err) {
+        debug("Error linking books to author: %o", err);
+        res.status(500).send({
+            status: "error",
+            message: "Failed to link books to author."
+        });
+    }
+});
+exports.addBooks = addBooks;
 /**
  * Unlink book from author
  */
