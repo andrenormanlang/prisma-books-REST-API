@@ -66,8 +66,9 @@ Add a book to a author.
 
 ```json
 {
-  "title": "2001: A Space Odessey",
-  "pages": 224
+  "title": "Hyperion",
+  "pages": 481,
+  "publisherId": 1
 }
 ```
 
