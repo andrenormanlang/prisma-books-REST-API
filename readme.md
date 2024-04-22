@@ -50,11 +50,40 @@ Add a book to a author.
 }
 ```
 
+#### `POST /authors/:authorId/many/books`
+
+Add many books to a author.
+
+```json
+{
+  "bookId": [2, 4, 5]
+}
+```
+
 ### `POST /authors`
 
 ```json
 {
   "name": "Sir Arthur C. Clarke"
+}
+```
+
+### `POST /authors/bulk`
+
+```json
+{
+  "authors": [
+    { "name": "Harper Lee" },
+    { "name": "F. Scott Fitzgerald" },
+    { "name": "J.K. Rowling" },
+    { "name": "George Orwell" },
+    { "name": "Jane Austen" },
+    { "name": "Mark Twain" },
+    { "name": "Virginia Woolf" },
+    { "name": "Ernest Hemingway" },
+    { "name": "William Shakespeare" },
+    { "name": "Charles Dickens" }
+  ]
 }
 ```
 
@@ -72,9 +101,142 @@ Add a book to a author.
 }
 ```
 
+### `POST /books/bulk`
+
+```json
+{
+  "books": [
+    {
+      "title": "To Kill a Mockingbird",
+      "pages": 281,
+      "isbn": "978-0061120084",
+      "publisherId": 1,
+      "cover": "hardcover"
+    },
+    {
+      "title": "1984",
+      "pages": 328,
+      "isbn": "978-0451524935",
+      "publisherId": 2,
+      "cover": "paperback"
+    },
+    {
+      "title": "Pride and Prejudice",
+      "pages": 432,
+      "isbn": "978-1503290563",
+      "publisherId": 3,
+      "cover": "hardcover"
+    },
+    {
+      "title": "The Great Gatsby",
+      "pages": 180,
+      "isbn": "978-0743273565",
+      "publisherId": 2,
+      "cover": "paperback"
+    },
+    {
+      "title": "Harry Potter and the Sorcerer's Stone",
+      "pages": 309,
+      "isbn": "978-0590353427",
+      "publisherId": 4,
+      "cover": "hardcover"
+    },
+    {
+      "title": "The Hobbit",
+      "pages": 310,
+      "isbn": "978-0547928227",
+      "publisherId": 5,
+      "cover": "paperback"
+    },
+    {
+      "title": "Moby Dick",
+      "pages": 635,
+      "isbn": "978-1503280786",
+      "publisherId": 1,
+      "cover": "hardcover"
+    },
+    {
+      "title": "War and Peace",
+      "pages": 1225,
+      "isbn": "978-0199232765",
+      "publisherId": 3,
+      "cover": "paperback"
+    },
+    {
+      "title": "The Catcher in the Rye",
+      "pages": 277,
+      "isbn": "978-0316769488",
+      "publisherId": 4,
+      "cover": "hardcover"
+    },
+    {
+      "title": "The Lord of the Rings",
+      "pages": 1178,
+      "isbn": "978-0544003415",
+      "publisherId": 5,
+      "cover": "paperback"
+    }
+  ]
+}
+```
+
+#### `DELETE /books`
+
+/books/:bookId
+
+#### `UPDATE /books`
+
+/books/:bookId
+
+### Publishers
+
+#### `GET /publishers`
+
+#### `POST /publisher`
+
+```json
+{
+  "title": "Hyperion",
+  "pages": 481,
+  "publisherId": 1
+}
+```
+
+### `POST /publishers/bulk`
+
+```json
+{
+  "publishers": [
+    {
+      "name": "Hutchinson"
+    },
+    {
+      "name": "Gnome Press"
+    },
+    {
+      "name": "Podium Audio"
+    },
+    {
+      "name": "Harper Collins"
+    },
+    {
+      "name": "Penguin Random House"
+    }
+  ]
+}
+```
+
+#### `DELETE /publishers`
+
+/publishers/:publisherId
+
+#### `UPDATE /publishers`
+
+/pusblishers/:publisherId
+
 ### User
 
-##### `POST /register`
+#### `POST /register`
 
 Register a new user.
 

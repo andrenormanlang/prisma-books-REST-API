@@ -3,7 +3,7 @@
  */
 import express from 'express'
 import { body } from 'express-validator'
-import { index, show, store, addBook, removeBook } from '../controllers/author_controller'
+import { index, show, store, addBook, removeBook, addBooks, storeBulkAuthors } from '../controllers/author_controller'
 const router = express.Router()
 
 /**
@@ -24,9 +24,21 @@ router.post('/', [
 ], store)
 
 /**
+ * POST /many-authors
+ */
+router.post('/bulk', [
+	body('name').optional().isString().withMessage('has to be a string').bail().isLength({ min: 3, max: 191 }).withMessage('has to be 3-191 chars long'),
+], storeBulkAuthors)
+
+/**
  * POST /authors/:authorId/books
  */
 router.post('/:authorId/books', addBook)
+
+/**
+ * POST /authors/:authorId/books
+ */
+router.post('/:authorId/many/books', addBooks)
 
 /**
  * DELETE /authors/:authorId/books/:bookId

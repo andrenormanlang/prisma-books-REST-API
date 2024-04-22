@@ -1,5 +1,5 @@
 import express from 'express'
-import { index, show, store, update, destroy } from '../controllers/publisher_controller'
+import { index, show, store, update, destroy, storeBulkPublishers } from '../controllers/publisher_controller'
 const router = express.Router()
 
 /**
@@ -16,6 +16,12 @@ router.get('/:publisherId', show)
  * POST /publishers
  */
 router.post('/', store)
+
+/**
+ * POST /publishers/bulk
+  */
+// Route for bulk creating publishers
+router.post('/bulk', storeBulkPublishers);
 
 /**
  * PATCH /publishers/:publisherId

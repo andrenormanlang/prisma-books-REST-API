@@ -81,13 +81,94 @@ export const store = async (req: Request, res: Response) => {
 }
 
 /**
+ * Bulk create books
+ */
+export const storeBulkBooks = async (req: Request, res: Response) => {
+  const books = req.body.books;
+
+  // Validate the input
+  if (!Array.isArray(books) || books.length === 0) {
+      return res.status(400).send({
+          status: "fail",
+          message: "Invalid input: please provide an array of book data."
+      });
+  }
+
+  try {
+      const createdBooks = await prisma.book.createMany({
+          data: books,
+          skipDuplicates: true, // Optionally skip duplicates based on unique constraints
+      });
+
+      res.status(201).send({
+          status: "success",
+          data: createdBooks,
+          message: `${createdBooks.count} books have been created successfully.`
+      });
+  } catch (err) {
+      debug("Error thrown when bulk creating books: %o", err);
+      res.status(500).send({
+          status: "error",
+          message: "Something went wrong while creating books."
+      });
+  }
+};
+
+/**
+ * Update a book
+ */
+/**
  * Update a book
  */
 export const update = async (req: Request, res: Response) => {
-}
+  const bookId = Number(req.params.bookId);
+  const updateData = req.body;
 
+  try {
+      const updatedBook = await prisma.book.update({
+          where: {
+              id: bookId
+          },
+          data: updateData,
+      });
+
+      res.send({
+          status: "success",
+          data: updatedBook,
+          message: "Book updated successfully."
+      });
+  } catch (error : any) {
+      debug("Error thrown when updating book with id %o: %o", bookId, error);
+      if (error.code === "P2025") {
+          res.status(404).send({ status: "error", message: "Book not found." });
+      } else {
+          res.status(500).send({ status: "error", message: "Something went wrong." });
+      }
+  }
+};
 /**
  * Delete a book
  */
 export const destroy = async (req: Request, res: Response) => {
-}
+  const bookId = Number(req.params.bookId);
+
+  try {
+      await prisma.book.delete({
+          where: {
+              id: bookId
+          }
+      });
+
+      res.send({
+          status: "success",
+          message: "Book deleted successfully."
+      });
+  } catch (error : any) {
+      debug("Error thrown when deleting book with id %o: %o", bookId, error);
+      if (error.code === "P2025") {
+          res.status(404).send({ status: "error", message: "Book not found." });
+      } else {
+          res.status(500).send({ status: "error", message: "Something went wrong." });
+      }
+  }
+};

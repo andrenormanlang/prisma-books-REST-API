@@ -58,6 +58,39 @@ export const store = async (req: Request, res: Response) => {
 }
 
 /**
+ * Bulk create publishers
+ */
+export const storeBulkPublishers = async (req: Request, res: Response) => {
+  const publishers = req.body.publishers;
+
+  // Validate the input
+  if (!Array.isArray(publishers) || publishers.length === 0) {
+      return res.status(400).send({
+          status: "fail",
+          message: "Invalid input: please provide an array of publisher data."
+      });
+  }
+
+  try {
+      const createdPublishers = await prisma.publisher.createMany({
+          data: publishers,
+          skipDuplicates: true, // Optionally skip duplicates based on unique constraints
+      });
+
+      res.status(201).send({
+          status: "success",
+          data: createdPublishers,
+          message: `${createdPublishers.count} publishers have been created successfully.`
+      });
+  } catch (err) {
+      return res.status(500).send({
+          status: "error",
+          message: "Something went wrong while creating publishers."
+      });
+  }
+};
+
+/**
  * Update a publisher
  */
 export const update = async (req: Request, res: Response) => {
